@@ -11,4 +11,6 @@ typedef struct Node {
 
 Node *node_create(PasswordEntry *entry);
 
+void list_insert(Node **head, Node *node);
+
 #endif
