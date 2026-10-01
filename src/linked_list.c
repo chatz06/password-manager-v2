@@ -2,6 +2,7 @@
 #include "../include/password.h"
 #include "../include/menu.h"
 #include "../include/linked_list.h"
+#include <stdlib.h>
 
 Node *node_create(PasswordEntry *entry){
     Node *node = malloc(sizeof(*node));
@@ -10,4 +11,25 @@ Node *node_create(PasswordEntry *entry){
     node->next = NULL;// κενο επειδη τωρα διμιηργηθηκε
 
     return node;
+}
+
+
+
+void list_insert(Node **head, Node *node)
+{
+    if (*head == NULL)
+    {
+        *head = node;
+    }
+    else
+    {
+        Node *current = *head;
+
+        while ((current->next)!=NULL)
+{
+    current = current->next;
+}
+     current->next = node;
+
+    }
 }
