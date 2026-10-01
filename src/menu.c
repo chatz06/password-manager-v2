@@ -1,5 +1,6 @@
 #include "../include/menu.h"
 #include "../include/password.h"
+#include "../include/linked_list.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,6 +9,7 @@ void menu(void)
 
     int choice;
     char input[10];
+    Node *head = NULL;
     
 
    do
@@ -36,7 +38,9 @@ void menu(void)
 
     
     PasswordEntry *entry = password_create();//τωρα κραταω και ονομα στο entry
-        
+    Node *node = node_create(entry);
+    list_insert(&head, node);
+
     break;
     }
     case 2:
