@@ -41,6 +41,9 @@ void menu(void)
     Node *node = node_create(entry);
     list_insert(&head, node);
 
+  
+
+
     break;
     }
     case 2:
