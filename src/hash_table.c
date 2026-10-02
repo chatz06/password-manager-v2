@@ -13,3 +13,22 @@ HashTable *hash_table_create(void)
 
     return table;
 }
+
+
+int hash_service(const char *service)
+{
+    int hash = 0;
+
+  for (int i = 0; service[i] != '\0'; i++)
+  {
+
+    char c = service[i];
+    hash+=c;
+
+  }
+
+  hash %=TABLE_SIZE;
+    
+
+return hash;
+}

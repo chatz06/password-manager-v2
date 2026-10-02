@@ -11,5 +11,6 @@ typedef struct {
 
 HashTable *hash_table_create(void);
 
+int hash_service(const char *service);
 
 #endif
