@@ -32,3 +32,12 @@ int hash_service(const char *service)
 
 return hash;
 }
+
+void hash_table_insert(HashTable *table, PasswordEntry *entry)
+{
+    int index = hash_service(entry->service);
+
+    Node *node = node_create(entry);
+
+    list_insert(&table->buckets[index], node);
+}
