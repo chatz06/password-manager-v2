@@ -1,8 +1,10 @@
 #include "../include/menu.h"
 #include "../include/password.h"
 #include "../include/linked_list.h"
+#include "../include/hash_table.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void menu(void)
 {
@@ -11,7 +13,8 @@ void menu(void)
     char input[10];
     Node *head = NULL;
     
-
+HashTable *table = hash_table_create();
+printf("MENU TABLE: %p\n", (void *)table);
    do
    {
 
@@ -37,9 +40,11 @@ void menu(void)
     case 1:{
 
     
-    PasswordEntry *entry = password_create();//τωρα κραταω και ονομα στο entry
-    Node *node = node_create(entry);
-    list_insert(&head, node);
+    PasswordEntry *entry = password_create();
+    
+    
+    hash_table_insert(table, entry);
+    
 
   
 
@@ -48,7 +53,33 @@ void menu(void)
     }
     case 2:
     //  Search password
+{
+    char service[100];
 
+    printf("Give service name: ");
+    fgets(service, sizeof(service), stdin);
+
+
+    service[strcspn(service, "\n")] = '\0';
+
+    PasswordEntry *result = hash_table_search(table, service);
+
+    
+    if (result != NULL)
+    {
+       
+        printf("Email: %s\n", result->email);
+        printf("Username: %s\n", result->username);
+        printf("Password: %s\n", result->password);
+    }
+    else
+{
+    printf("Service not found!\n");
+}
+
+
+}
+    
     break;
     case 3:
     //Delete password 

@@ -15,4 +15,6 @@ HashTable *hash_table_create(void);
 
 int hash_service(const char *service);
 
+PasswordEntry *hash_table_search(HashTable *table, const char *service);
+
 #endif
