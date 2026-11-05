@@ -14,7 +14,7 @@ void menu(void)
     Node *head = NULL;
     
 HashTable *table = hash_table_create();
-printf("MENU TABLE: %p\n", (void *)table);
+
    do
    {
 
@@ -38,17 +38,24 @@ printf("MENU TABLE: %p\n", (void *)table);
     switch (choice)
     {
     case 1:{
-
-    
+        {
     PasswordEntry *entry = password_create();
     
     
-    hash_table_insert(table, entry);
+   int result= hash_table_insert(table, entry);
+   if(result==0)
+   {
+    puts("Service already exists. Try a different name, e.g. google1 instead of google.");
+   }
+   else
+   {
+    puts("Your entry was added successfully!");
+   }
+
+        }
+        
+
     
-
-  
-
-
     break;
     }
     case 2:
@@ -83,7 +90,27 @@ printf("MENU TABLE: %p\n", (void *)table);
     break;
     case 3:
     //Delete password 
+    {
+    
+    char service[100];
 
+    printf("Give name of service: ");
+    fgets(service, 100, stdin);
+    service[strcspn(service, "\n")] = '\0';
+
+    int result = hash_table_delete(table, service);
+
+    if(result ==1)
+    {
+        puts("Password deleted successfully!");
+    }
+    else
+    {
+        puts("It wasn't found!");
+    }
+    
+    
+    }
     break;
 
     case 4:

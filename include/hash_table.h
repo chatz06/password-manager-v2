@@ -9,7 +9,7 @@ typedef struct {
     Node *buckets[TABLE_SIZE];
 } HashTable;
 
-void hash_table_insert(HashTable *table, PasswordEntry *entry);
+int hash_table_insert(HashTable *table, PasswordEntry *entry);
 
 HashTable *hash_table_create(void);
 
@@ -18,5 +18,7 @@ int hash_service(const char *service);
 PasswordEntry *hash_table_search(HashTable *table, const char *service);
 
 void hash_table_list(HashTable *table);
+
+int hash_table_delete(HashTable *table, const char *service);
 
 #endif
