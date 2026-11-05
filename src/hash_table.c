@@ -35,14 +35,20 @@ int hash_service(const char *service)
 return hash;
 }
 
-void hash_table_insert(HashTable *table, PasswordEntry *entry)
+int hash_table_insert(HashTable *table, PasswordEntry *entry)
 {
+   if((hash_table_search(table,entry->service)) != NULL ) {
+    return 0;
+
     
-    int index = hash_service(entry->service);
+   }
+   int index = hash_service(entry->service);
 
     Node *node = node_create(entry);
 
     list_insert(&table->buckets[index], node);
+    
+    return 1;
     
 }
 
@@ -87,4 +93,55 @@ void hash_table_list(HashTable *table)
     }
     
    }
+}
+
+
+int hash_table_delete(HashTable *table, const char *service)
+{
+     int flag =0;
+     Node *previous = NULL;
+    int i =hash_service(service);
+
+    
+    Node *current = table->buckets[i];
+    
+
+    while ((current!=NULL) && (flag==0))
+    {
+        if (strcmp(current->entry->service, service) == 0)
+        {
+            if(previous == NULL)
+            {
+                table->buckets[i]=current->next;
+
+            }
+            else if (current->next != NULL)
+            {
+                previous->next=current->next;
+
+
+            }
+            else
+            {
+                previous->next=NULL;
+
+            }
+            
+            
+
+            free(current->entry->service);
+            free(current->entry->email);
+            free(current->entry->username);
+            free(current->entry->password);
+
+            flag=1;
+
+        }
+
+        previous= current;
+        current= current->next;
+        
+    }
+    
+   return flag;
 }
