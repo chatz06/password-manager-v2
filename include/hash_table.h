@@ -17,4 +17,6 @@ int hash_service(const char *service);
 
 PasswordEntry *hash_table_search(HashTable *table, const char *service);
 
+void hash_table_list(HashTable *table);
+
 #endif

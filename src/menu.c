@@ -88,6 +88,7 @@ printf("MENU TABLE: %p\n", (void *)table);
 
     case 4:
     // List passwords
+    hash_table_list(table);
 
 
     break;
