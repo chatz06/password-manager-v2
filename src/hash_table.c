@@ -68,3 +68,23 @@ int index = hash_service(service);
     return NULL;
 }
     
+void hash_table_list(HashTable *table)
+{
+  for (int i = 0; i < TABLE_SIZE; i++)
+   {
+    Node *current = table->buckets[i];
+
+    while (current!=NULL)
+    {
+        printf("Service: %s\n", current->entry->service);
+        printf("Email: %s\n", current->entry->email);
+        printf("Username: %s\n", current->entry->username);
+        printf("Password: %s\n", current->entry->password);
+
+        printf("-----------------------------\n");
+        current= current->next;
+        
+    }
+    
+   }
+}
