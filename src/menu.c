@@ -25,7 +25,7 @@ HashTable *table = hash_table_create();
     printf("2. Search password\n");
     printf("3. Delete password\n");
     printf("4. List passwords\n");
-    printf("5. Exit\n");
+    printf("5. Exit & Save\n");
     printf("Choose an option: ");
     fgets(input, sizeof(input), stdin);
     choice = atoi(input);//convert char to int
