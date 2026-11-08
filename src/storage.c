@@ -1,10 +1,12 @@
 #include "../include/storage.h"
+#include "../include/hash_table.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 int parse_line(const char *line, PasswordEntry **entry)
 {
+    *entry = NULL;
     size_t length = strlen(line);
 
     char *fields[4] = {NULL, NULL, NULL, NULL};
@@ -15,7 +17,7 @@ int parse_line(const char *line, PasswordEntry **entry)
     size_t j = 0;
     for (int k = 0; k < 4; k++)
    {
-    fields[k] = malloc(strlen(line) + 1);
+   fields[k] = malloc(length + 1);
 
 
 
@@ -146,9 +148,34 @@ int storage_load(HashTable *table)
 while (fgets(line, sizeof(line), file) != NULL)
 {
       line[strcspn(line, "\n")] = '\0';
+
+      PasswordEntry *entry = NULL;
+      if (parse_line(line, &entry) == 0)
+       {
+        fclose(file);
+        return 0;
+       }
+
+       
+
+       if (hash_table_insert(table, entry) == 0)
+       { 
+    free(entry->service);
+    free(entry->email);
+    free(entry->username);
+    free(entry->password);
+    free(entry);
+       }
     
 }
+   if (ferror(file))
+    {
+    fclose(file);
+    return 0;
+    }
 
+fclose(file);
+return 1;
 
 }
 
