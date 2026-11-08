@@ -17,8 +17,17 @@ int parse_line(const char *line, PasswordEntry **entry)
    {
     fields[k] = malloc(strlen(line) + 1);
 
+
+
+
     if (fields[k] == NULL)
     {
+        for (int n = 0; n < k; n++){
+            free(fields[n]);
+        }
+        
+
+
         return 0;
 
     }
@@ -29,8 +38,15 @@ int parse_line(const char *line, PasswordEntry **entry)
 {
     if (line[i] == '\\')
     {
-        if (line[i + 1] == '\0')
+        if (line[i + 1] == '\0'){
+            for (int n = 0; n < 4; n++){
+                free(fields[n]);
+            }
+            
+
             return 0;
+        }
+             
 
         if (line[i + 1] == '|' || line[i + 1] == '\\')
         {
@@ -41,12 +57,25 @@ int parse_line(const char *line, PasswordEntry **entry)
         }
         else
         {
+            for (int n = 0; n < 4; n++){
+                free(fields[n]);
+            }
             return 0;
         }
         
     }
     else if (line[i] == '|')
      {
+        if (field_count >= 3)
+         {
+           for (int n = 0; n < 4; n++){
+            free(fields[n]);
+           
+           }
+            
+
+    return 0;
+          }
        fields[field_count][j] = '\0';
        field_count++;
        j = 0;
@@ -59,11 +88,39 @@ int parse_line(const char *line, PasswordEntry **entry)
     i++;
      }
 
-     fields[field_count][j] = '\0';
+     
 
 }
+fields[field_count][j] = '\0';
 
+if (field_count != 3){
+    for (int n = 0; n < 4; n++){
+            free(fields[n]);
+        }
+        return 0;
+}
 
+    
+
+    *entry = malloc(sizeof(PasswordEntry));
+
+      if (*entry == NULL){
+
+      for (int n = 0; n < 4; n++){
+            free(fields[n]);
+        }
+        return 0;
+    }
+
+        
+
+    (*entry)->service=fields[0];
+    (*entry)->email=fields[1];
+    (*entry)->username=fields[2];
+    (*entry)->password=fields[3];
+
+  
+  return 1;
 }
 
 int storage_load(HashTable *table)
@@ -88,6 +145,7 @@ int storage_load(HashTable *table)
 
 while (fgets(line, sizeof(line), file) != NULL)
 {
+      line[strcspn(line, "\n")] = '\0';
     
 }
 
