@@ -178,9 +178,32 @@ fclose(file);
 return 1;
 
 }
+int write_field(FILE *file, const char *field)
+{
+    
+}
+
 
 int storage_save(HashTable *table)
 {
+    FILE *file = fopen("passwords.txt", "w");
+
+    if (file == NULL)
+    {
+        return 0;
+    }
+
+    for (int i = 0; i < TABLE_SIZE; i++)
+{
+    Node *current = table->buckets[i];
+
+    while (current != NULL)
+    {
+        // Αποθήκευση της εγγραφής
+
+        current = current->next;
+    }
+}
 
 
 }
