@@ -76,20 +76,21 @@ int index = hash_service(service);
     
 void hash_table_list(HashTable *table)
 {
+    printf("| %-20s | %-30s | %-20s | %-20s |\n",
+       "Service", "Email", "Username", "Password");
   for (int i = 0; i < TABLE_SIZE; i++)
    {
     Node *current = table->buckets[i];
-
+    
     while (current!=NULL)
     {
-        printf("Service: %s\n", current->entry->service);
-        printf("Email: %s\n", current->entry->email);
-        printf("Username: %s\n", current->entry->username);
-        printf("Password: %s\n", current->entry->password);
+        printf("| %-20s | %-30s | %-20s | %-20s |\n",
+       current->entry->service,
+       current->entry->email,
+       current->entry->username,
+       current->entry->password);
 
-        printf("-----------------------------\n");
-        current= current->next;
-        
+       current=current->next;
     }
     
    }

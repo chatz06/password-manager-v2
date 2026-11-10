@@ -1,3 +1,4 @@
+#include "../include/storage.h"
 #include "../include/menu.h"
 #include "../include/password.h"
 #include "../include/linked_list.h"
@@ -14,6 +15,12 @@ void menu(void)
     Node *head = NULL;
     
 HashTable *table = hash_table_create();
+
+if (storage_load(table) == 0)
+{
+    printf("Failed to load passwords!\n");
+    return;
+}
 
    do
    {
@@ -115,15 +122,29 @@ HashTable *table = hash_table_create();
 
     case 4:
     // List passwords
+    puts("");
     hash_table_list(table);
 
 
     break;
 
     case 5:
-    // Exit
+    // Exit and save
+    {
+        if (storage_save(table) == 1)
+    {
+        puts("Passwords saved successfully!");
+    }
+    else
+    {
+        puts("Failed to save passwords!");
+    }
 
+    }
+     
     break;
+
+    
 
     
     default:
