@@ -1,5 +1,6 @@
 #ifndef STORAGE_H
 #define STORAGE_H
+#include <stdio.h>
 #include "hash_table.h"
 // Include
 int parse_line(const char *line, PasswordEntry **entry);

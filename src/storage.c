@@ -180,7 +180,26 @@ return 1;
 }
 int write_field(FILE *file, const char *field)
 {
-    
+    size_t i = 0;
+
+    while (field[i] != '\0')
+    {
+        if((field[i]=='|') || (field[i]=='\\')){
+            if(fputc('\\', file) == EOF)
+            {
+                return 0;
+            }
+        }
+
+        if(fputc(field[i], file)== EOF)
+        {
+            return 0;
+        }
+        
+
+        i++;
+    }
+    return 1;
 }
 
 
@@ -199,11 +218,69 @@ int storage_save(HashTable *table)
 
     while (current != NULL)
     {
-        // Αποθήκευση της εγγραφής
+        if(write_field(file,current->entry->service)==0){
+           fclose(file);
+           return 0;
+        }
+        if (fputc('|', file) == EOF)
+        {
+         fclose(file);
+         return 0;
+        }
+           
+        if(write_field(file,current->entry->email)==0)
+        {
+           fclose(file);
+           return 0;
+        }
+
+        
+        if (fputc('|', file) == EOF)
+        {
+         fclose(file);
+         return 0;
+        }
+
+        if(write_field(file, current->entry->username)==0)
+        {
+           fclose(file);
+           return 0;
+        }
+
+        if (fputc('|', file) == EOF)
+        {
+         fclose(file);
+         return 0;
+        }
+
+        if(write_field(file,current->entry->password)==0)
+        {
+           fclose(file);
+           return 0;
+        }
+        
+       
+        
 
         current = current->next;
+        if (fputc('\n', file) == EOF)
+        {
+         fclose(file);
+         return 0;
+        }
     }
 }
 
+   if (ferror(file))
+   {
+    fclose(file);
+    return 0;
+    }
 
+  if (fclose(file) == EOF){
+    return 0;
+  }
+    
+
+  return 1;
 }
