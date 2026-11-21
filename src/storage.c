@@ -7,7 +7,7 @@
 #include <sodium.h>
 #include <errno.h>
 
-int parse_line(const char *line, size_t line_len, PasswordEntry **entry);
+int parse_line(const char *line, size_t line_len, PasswordEntry **entry)
 {
     *entry = NULL;
     size_t length = line_len;
@@ -55,6 +55,12 @@ int parse_line(const char *line, size_t line_len, PasswordEntry **entry);
 
         if (line[i + 1] == '|' || line[i + 1] == '\\')
         {
+
+            if (field_count >= 4){
+                return 0;
+            }
+             
+
             fields[field_count][j] = line[i + 1];
 
              i += 2;
@@ -127,6 +133,72 @@ if (field_count != 3){
   
   return 1;
 }
+
+int storage_parse_plaintext(HashTable *table,
+                            const unsigned char *plaintext,
+                            size_t plaintext_len)
+{
+    size_t start = 0;
+    size_t i = 0;
+
+    while (i < plaintext_len)
+{
+    if (plaintext[i] == '\n')
+{
+    size_t line_len = i - start;
+
+    PasswordEntry *entry = NULL;
+
+if (parse_line((const char *)&plaintext[start],line_len,&entry) == 0)
+{
+    return 1;
+}
+
+if (hash_table_insert(table, entry) == 0)
+{
+    free(entry->service);
+    free(entry->email);
+    free(entry->username);
+    free(entry->password);
+    free(entry);
+
+    return 1;
+}
+
+    start = i +1;
+
+}
+
+    i++;
+}
+
+if (start < plaintext_len)
+{
+    size_t line_len = plaintext_len - start;
+
+    PasswordEntry *entry = NULL;
+
+if (parse_line((const char *)&plaintext[start],line_len, &entry) == 0)
+{
+    return 1;
+}
+
+if (hash_table_insert(table, entry) == 0)
+{
+    free(entry->service);
+    free(entry->email);
+    free(entry->username);
+    free(entry->password);
+    free(entry);
+
+    return 1;
+}
+
+}
+
+return 0;
+}
+
 
 int storage_load(HashTable *table)
 {
