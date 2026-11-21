@@ -6,21 +6,50 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sodium.h>
 
 void menu(void)
 {
 
     int choice;
     char input[10];
-    Node *head = NULL;
+    HashTable *table = hash_table_create();
+    char master_password[256];
     
-HashTable *table = hash_table_create();
-
-if (storage_load(table) == 0)
+if (table == NULL)
 {
-    printf("Failed to load passwords!\n");
+    printf("Failed to create Hash Table!\n");
     return;
 }
+
+
+
+    printf("%s", "Enter Master Password: ");
+
+    if (fgets(master_password, sizeof(master_password), stdin) == NULL)
+{
+    printf("Failed to read Master Password!\n");
+    free(table);
+    return;
+}
+
+    master_password[strcspn(master_password, "\n")] = '\0';
+
+    if(strlen(master_password) == 0)
+    {
+        printf("Master Password cannot be empty!\n");
+        free(table);
+        return;
+    }
+
+    unsigned char salt[crypto_pwhash_SALTBYTES];
+
+    unsigned char key[crypto_aead_xchacha20poly1305_ietf_KEYBYTES];
+
+
+    
+
+    
 
    do
    {

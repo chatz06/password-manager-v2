@@ -9,9 +9,14 @@ int storage_load(HashTable *table);
 
 int write_field(FILE *file, const char *field);
 
-int storage_save(HashTable *table);
+int storage_save(HashTable *table,
+                 const unsigned char *salt,
+                 const unsigned char *key);
 
-
+int storage_open(HashTable *table,
+                 const char *master_password,
+                 unsigned char *salt,
+                 unsigned char *key);
 
 
 

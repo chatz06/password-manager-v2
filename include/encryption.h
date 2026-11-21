@@ -19,4 +19,13 @@ int encryption_encrypt(
     size_t *ciphertext_len
 );
 
+int encryption_decrypt(
+    const unsigned char *ciphertext,
+    size_t ciphertext_len,
+    const unsigned char *key,
+    const unsigned char *nonce,
+    unsigned char **plaintext,
+    size_t *plaintext_len
+);
+
 #endif

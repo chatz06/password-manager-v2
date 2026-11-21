@@ -62,6 +62,7 @@ int encryption_encrypt(
 {
     return -1;
 }
+   *ciphertext = NULL;
 
     randombytes_buf(nonce, crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
 
@@ -94,4 +95,65 @@ int encryption_encrypt(
 *ciphertext_len = (size_t) encrypted_len;
 
   return 0;
+}
+
+
+int encryption_decrypt(
+    const unsigned char *ciphertext,
+    size_t ciphertext_len,
+    const unsigned char *key,
+    const unsigned char *nonce,
+    unsigned char **plaintext,
+    size_t *plaintext_len
+)
+{
+
+    if (ciphertext == NULL || key == NULL ||
+    nonce == NULL || plaintext == NULL ||
+    plaintext_len == NULL)
+{
+    return -1;
+}
+
+*plaintext = NULL;
+*plaintext_len = 0;
+
+if (ciphertext_len < crypto_aead_xchacha20poly1305_ietf_ABYTES)
+{
+    return -1;
+}
+
+*plaintext = malloc(
+    ciphertext_len - crypto_aead_xchacha20poly1305_ietf_ABYTES
+);
+
+if (*plaintext == NULL)
+{
+    return -1;
+}
+
+unsigned long long decrypted_len;
+
+if (crypto_aead_xchacha20poly1305_ietf_decrypt(
+        *plaintext,
+        &decrypted_len,
+        NULL,
+        ciphertext,
+        (unsigned long long) ciphertext_len,
+        NULL,
+        0,
+        nonce,
+        key
+    ) != 0)
+{
+    sodium_memzero(*plaintext, ciphertext_len - crypto_aead_xchacha20poly1305_ietf_ABYTES);
+    free(*plaintext);
+    *plaintext = NULL;
+    return -1;
+}
+
+*plaintext_len = (size_t) decrypted_len;
+
+return 0;
+
 }

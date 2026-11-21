@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../include/encryption.h"
+#include <sodium.h>
+#include <errno.h>
 
 int parse_line(const char *line, PasswordEntry **entry)
 {
@@ -203,7 +206,14 @@ int write_field(FILE *file, const char *field)
 }
 
 
-int storage_save(HashTable *table)
+
+
+
+
+
+int storage_save(HashTable *table,
+                 const unsigned char *salt,
+                 const unsigned char *key)
 {
     FILE *file = fopen("passwords.txt", "w");
 
@@ -283,4 +293,125 @@ int storage_save(HashTable *table)
     
 
   return 1;
+}
+
+
+
+int storage_open(HashTable *table,
+                 const char *master_password,
+                 unsigned char *salt,
+                 unsigned char *key)
+{
+    unsigned char nonce[crypto_aead_xchacha20poly1305_ietf_NPUBBYTES];
+
+    errno = 0;
+
+    FILE *file = fopen("vault.dat", "rb");
+
+
+
+
+
+if (errno == ENOENT)
+{
+    if (encryption_generate_salt(salt) != 0)
+    return 0;
+    encryption_derive_key(master_password, salt, key)
+
+    if (encryption_derive_key(master_password, salt, key) == -1)
+{
+    printf("Failed to derive encryption key!\n");
+    sodium_memzero(key, crypto_aead_xchacha20poly1305_ietf_KEYBYTES);
+    return 0;
+}
+sodium_memzero((void *)master_password, strlen(master_password));
+   return 1;
+}
+else
+{
+    size_t bytes_read_salt = fread(salt, 1, crypto_pwhash_SALTBYTES, file);
+
+    if (bytes_read_salt != crypto_pwhash_SALTBYTES)
+{
+    fclose(file);
+    return 0;
+}
+
+ size_t bytes_read_nonce = fread(nonce, 1, crypto_aead_xchacha20poly1305_ietf_NPUBBYTES, file);
+
+    if (bytes_read_nonce!= crypto_aead_xchacha20poly1305_ietf_NPUBBYTES)
+{
+    fclose(file);
+    return 0;
+}
+
+if (fseek(file, 0, SEEK_END) != 0)
+{
+    fclose(file);
+    return 0;
+}
+
+long file_size = ftell(file);
+
+if (file_size == -1L)
+{
+    fclose(file);
+    return 0;
+}
+
+long ciphertext_size = file_size - crypto_pwhash_SALTBYTES - crypto_aead_xchacha20poly1305_ietf_NPUBBYTES;
+
+if (ciphertext_size < crypto_aead_xchacha20poly1305_ietf_ABYTES)
+{
+    fclose(file);
+    return 0;
+}
+    
+    unsigned char *ciphertext = malloc(ciphertext_size);
+
+    if(ciphertext == NULL)
+    {
+        fclose(file);
+        return 0;
+    }
+    
+   fread(ciphertext, 1, ciphertext_size, file);
+
+    if ( ciphertext_size!= ciphertext)
+{
+    fclose(file);
+    return 0;
+}
+ size_t bytes_read_ciphertext = fread(ciphertext, 1, (size_t)ciphertext_size, file);
+ 
+ if( bytes_read_ciphertext != (size_t)ciphertext_size )
+ {
+    free(ciphertext);
+    fclose(file);
+    return 0;
+ }
+
+if (encryption_derive_key(master_password, salt, key) !=-1 )
+{
+    free(ciphertext);
+   sodium_memzero(key, crypto_aead_xchacha20poly1305_ietf_KEYBYTES);
+    fclose(file);
+    return 0;
+}
+
+unsigned char *plaintext =NULL;
+size_t plaintext_len = 0;
+
+ if(encryption_decrypt(ciphertext,ciphertext_len,key,nonce,&plaintext,&plaintext_len) !=0 )
+ {
+   free(ciphertext);
+   sodium_memzero(key, crypto_aead_xchacha20poly1305_ietf_KEYBYTES);
+   sodium_memzero(plaintext, plaintext_len);
+   fclose(file);
+   return 0;
+
+ }
+
+}
+
 }
