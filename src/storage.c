@@ -7,10 +7,10 @@
 #include <sodium.h>
 #include <errno.h>
 
-int parse_line(const char *line, PasswordEntry **entry)
+int parse_line(const char *line, size_t line_len, PasswordEntry **entry);
 {
     *entry = NULL;
-    size_t length = strlen(line);
+    size_t length = line_len;
 
     char *fields[4] = {NULL, NULL, NULL, NULL};
 
@@ -39,11 +39,11 @@ int parse_line(const char *line, PasswordEntry **entry)
         
     }
 
-   while (line[i] != '\0')
+   while (i < line_len)
 {
     if (line[i] == '\\')
     {
-        if (line[i + 1] == '\0'){
+        if (i + 1 >= line_len) {
             for (int n = 0; n < 4; n++){
                 free(fields[n]);
             }
@@ -153,7 +153,7 @@ while (fgets(line, sizeof(line), file) != NULL)
       line[strcspn(line, "\n")] = '\0';
 
       PasswordEntry *entry = NULL;
-      if (parse_line(line, &entry) == 0)
+      if (parse_line(line,strlen(line), &entry) == 0)
        {
         fclose(file);
         return 0;
