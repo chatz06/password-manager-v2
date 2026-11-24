@@ -124,4 +124,4 @@ This project explores:
 
 ## License
 
-[Choose a license before distributing the project.]
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
