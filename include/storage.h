@@ -12,6 +12,8 @@ int storage_parse_plaintext(HashTable *table,
 
 int storage_load(HashTable *table);
 
+
+
 int write_field(FILE *file, const char *field);
 
 int storage_save(HashTable *table,

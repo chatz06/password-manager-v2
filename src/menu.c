@@ -46,7 +46,22 @@ if (table == NULL)
 
     unsigned char key[crypto_aead_xchacha20poly1305_ietf_KEYBYTES];
 
+memset(key, 0, sizeof(key));
 
+if (storage_open(table, master_password, salt, key) != 1)
+{
+    printf("Failed to open password vault!\n");
+
+    sodium_memzero(master_password, sizeof(master_password));
+    sodium_memzero(key, sizeof(key));
+
+    free(table);
+    return;
+}
+
+sodium_memzero(master_password, sizeof(master_password));
+
+printf("Vault opened successfully!\n");
     
 
     
@@ -160,7 +175,7 @@ if (table == NULL)
     case 5:
     // Exit and save
     {
-        if (storage_save(table) == 1)
+        if (storage_save(table, salt, key) == 1)
     {
         puts("Passwords saved successfully!");
     }
@@ -183,6 +198,7 @@ if (table == NULL)
 
 }
    while (choice!= 5);
+   sodium_memzero(key, sizeof(key));
 
 
 }
