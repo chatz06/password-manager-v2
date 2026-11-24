@@ -8,7 +8,7 @@ Node *node_create(PasswordEntry *entry){
     Node *node = malloc(sizeof(*node));
 
     node->entry = entry;
-    node->next = NULL;// κενο επειδη τωρα διμιηργηθηκε
+    node->next = NULL;
 
     return node;
 }

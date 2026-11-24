@@ -6,21 +6,65 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sodium.h>
 
 void menu(void)
 {
 
     int choice;
     char input[10];
-    Node *head = NULL;
+    HashTable *table = hash_table_create();
+    char master_password[256];
     
-HashTable *table = hash_table_create();
-
-if (storage_load(table) == 0)
+if (table == NULL)
 {
-    printf("Failed to load passwords!\n");
+    printf("Failed to create Hash Table!\n");
     return;
 }
+
+
+
+    printf("%s", "Enter Master Password: ");
+
+    if (fgets(master_password, sizeof(master_password), stdin) == NULL)
+{
+    printf("Failed to read Master Password!\n");
+    free(table);
+    return;
+}
+
+    master_password[strcspn(master_password, "\n")] = '\0';
+
+    if(strlen(master_password) == 0)
+    {
+        printf("Master Password cannot be empty!\n");
+        free(table);
+        return;
+    }
+
+    unsigned char salt[crypto_pwhash_SALTBYTES];
+
+    unsigned char key[crypto_aead_xchacha20poly1305_ietf_KEYBYTES];
+
+memset(key, 0, sizeof(key));
+
+if (storage_open(table, master_password, salt, key) != 1)
+{
+    printf("Failed to open password vault!\n");
+
+    sodium_memzero(master_password, sizeof(master_password));
+    sodium_memzero(key, sizeof(key));
+
+    free(table);
+    return;
+}
+
+sodium_memzero(master_password, sizeof(master_password));
+
+printf("Vault opened successfully!\n");
+    
+
+    
 
    do
    {
@@ -131,7 +175,7 @@ if (storage_load(table) == 0)
     case 5:
     // Exit and save
     {
-        if (storage_save(table) == 1)
+        if (storage_save(table, salt, key) == 1)
     {
         puts("Passwords saved successfully!");
     }
@@ -154,6 +198,7 @@ if (storage_load(table) == 0)
 
 }
    while (choice!= 5);
+   sodium_memzero(key, sizeof(key));
 
 
 }
