@@ -34,7 +34,7 @@ jobs:
           src/linked_list.c src/hash_table.c \
           src/storage.c src/encryption.c \
           -o password-manager.exe \
-          $(pkg-config --libs libsodium)
+          $(pkg-config --libs --static libsodium) -static -static-libgcc
 
       - name: Compile encryption tests
         shell: msys2 {0}
@@ -43,7 +43,7 @@ jobs:
           $(pkg-config --cflags libsodium) \
           tests/test_encryption.c src/encryption.c \
           -o tests/test_encryption.exe \
-          $(pkg-config --libs libsodium)
+          $(pkg-config --libs --static libsodium) -static -static-libgcc
 
       - name: Run encryption tests
         shell: msys2 {0}
