@@ -64,5 +64,4 @@ passwords.txt
 build/
 
 # Executables
-Makefile
 password-manager
